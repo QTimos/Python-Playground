@@ -477,11 +477,6 @@ def render_png_image(data: bytes) -> None:
         clock.tick(60)
 
 
-
-    # print(WIDTH, HEIGHT, BIT_DEPTH, COLOR_LIST)
-    # print(image_data)
-
-
 def render_jpg_image(data: bytes) -> None:
     ...
 

@@ -3,6 +3,7 @@ import zlib
 import time
 import pygame
 import numpy as np
+from numba import njit
 from pathlib import Path
 from enum import IntEnum
 
@@ -40,18 +41,32 @@ def make_inter_matrix(uncomp_data, height, bpp, bpr) -> np.ndarray:
         elif ft == 2:
             out[:] = ((filt.astype(np.uint16) + prev) & 255)
         elif ft == 3:
-            for x in range(bpr):
-                a = int(out[x - bpp]) if x >= bpp else 0
-                out[x] = (filt[x] + ((a + int(prev[x])) >> 1)) & 255
+            prev_list = prev.tolist()
+            filt_list = filt.tolist()
+            out_list = out.tolist()
+            @njit(cache=True)
+            def func():
+                for x in range(bpr):
+                    a = int(out_list[x - bpp]) if x >= bpp else 0
+                    out_list[x] = (filt_list[x] + ((a + int(prev_list[x])) >> 1)) & 255
+                return out_list
+            out[:] = func()
         elif ft == 4:
-            for x in range(bpr):
-                a = int(out[x - bpp]) if x >= bpp else 0
-                b = int(prev[x])
-                c = int(prev[x - bpp]) if x >= bpp else 0
-                p = a + b - c
-                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
-                pred = a if (pa <= pb and pa <= pc) else (b if pb <= pc else c)
-                out[x] = (int(filt[x]) + pred) & 255
+            prev_list = prev.tolist()
+            filt_list = filt.tolist()
+            out_list = out.tolist()
+            @njit(cache=True)
+            def func():
+                for x in range(bpr):
+                    a = int(out_list[x - bpp]) if x >= bpp else 0
+                    b = int(prev_list[x])
+                    c = int(prev_list[x - bpp]) if x >= bpp else 0
+                    p = a + b - c
+                    pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                    pred = a if (pa <= pb and pa <= pc) else (b if pb <= pc else c)
+                    out_list[x] = (int(filt_list[x]) + pred) & 255
+                return out_list
+            out[:] = func()
         else:
             raise RuntimeError(f"Invalid ft '{ft}' on row '{i}'")
     return inter[1:]
