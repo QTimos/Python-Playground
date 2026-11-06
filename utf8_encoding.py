@@ -99,9 +99,10 @@ def main() -> None:
     # print(bytes([a]).decode(encoding="utf-8"))
     # print(int(0xffff))
     string = "中中"
-    char_bytes = b"".join([utf8_encode(char) for char in string])
-    print(char_bytes)
-    print(utf8_decode(char_bytes))
+    print(string.)
+    # char_bytes = b"".join([utf8_encode(char) for char in string])
+    # print(char_bytes)
+    # print(utf8_decode(char_bytes))
     ...
 
 
