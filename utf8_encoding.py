@@ -26,7 +26,8 @@ def utf8_bin(char: str) -> str:
 
 
 def utf8_encode(char: str) -> bytes:
-    binary = bin(ord(char))[2:]
+    char_val = ord(char)
+    binary = bin(char_val)[2:]
     headers = ["", "0", "110", "1110", "11110"]
     bytes_str_list = deque([])
     for i in range(len(binary), 0 , -6):
@@ -91,19 +92,9 @@ def utf8_decode(encoded: bytes) -> str:
 
 
 def main() -> None:
-    # upper_a = "A"
-    # lower_a = chr((ord(upper_a) | 32))
-    # print(ord(upper_a), upper_a)
-    # print(ord(lower_a), lower_a)
-    # a = 0x41
-    # print(bytes([a]).decode(encoding="utf-8"))
-    # print(int(0xffff))
-    string = "中中"
-    print(string.)
-    # char_bytes = b"".join([utf8_encode(char) for char in string])
-    # print(char_bytes)
-    # print(utf8_decode(char_bytes))
-    ...
+    string = "Hello, world!\n"
+    bytes = b"".join([utf8_encode(c) for c in string])
+    print(utf8_decode(bytes))
 
 
 if __name__ == "__main__":
